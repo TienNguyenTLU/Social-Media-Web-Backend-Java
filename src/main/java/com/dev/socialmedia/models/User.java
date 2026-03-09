@@ -35,5 +35,4 @@ public class User {
     @ManyToMany
     @JoinTable(name = "user_liked_posts")
     private Set<Post> likedPosts;
-
 }

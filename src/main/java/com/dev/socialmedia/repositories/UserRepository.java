@@ -24,6 +24,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT f.following FROM Follow f WHERE f.follower.id = :userId " +
             "AND f.following.id IN (SELECT f2.follower.id FROM Follow f2 WHERE f2.following.id = :userId)")
     List<User> findAllFriends(@Param("userId") Long userId);
+    @Query("SELECT u FROM User u " +
+            "LEFT JOIN FETCH u.posts " +
+            "LEFT JOIN FETCH u.savedPosts " +
+            "WHERE u.username = :username")
+    Optional<User> findProfileByUsername(@Param("username") String username);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
 }

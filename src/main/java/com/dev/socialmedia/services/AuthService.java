@@ -1,6 +1,9 @@
 package com.dev.socialmedia.services;
 import com.dev.socialmedia.dto.LoginRequest;
+import com.dev.socialmedia.dto.ProfileDTO;
 import com.dev.socialmedia.dto.RegisterRequest;
+import com.dev.socialmedia.dto.UserDTO;
+import com.dev.socialmedia.exceptions.ResourceNotFoundException;
 import com.dev.socialmedia.models.User;
 import com.dev.socialmedia.repositories.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
@@ -42,4 +45,5 @@ public class AuthService {
         }
         return jwt.GenerateToken(req.getUsername());
     }
+
 }
