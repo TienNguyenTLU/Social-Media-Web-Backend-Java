@@ -1,6 +1,7 @@
 package com.dev.socialmedia.dto;
 
 import com.dev.socialmedia.models.Category;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,11 +11,11 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Data
 public class PostDTO {
     Long id;
     String content;
     String imageUrl;
-    Long authorId;
     Integer likesCount;
     LocalDateTime createdAt;
     Set<Long> categoriesIds;
