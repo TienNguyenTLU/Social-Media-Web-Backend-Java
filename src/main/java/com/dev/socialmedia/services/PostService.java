@@ -1,6 +1,7 @@
 package com.dev.socialmedia.services;
 import com.dev.socialmedia.dto.PostDTO;
 import com.dev.socialmedia.models.Category;
+import com.dev.socialmedia.models.Hashtag;
 import com.dev.socialmedia.models.Post;
 import com.dev.socialmedia.repositories.CategoryRepository;
 import com.dev.socialmedia.repositories.PostRepository;
@@ -23,12 +24,13 @@ public class PostService {
         this.userRepository = userRepository;
             this.categoryRepository = categoryRepository;
     }
-    public Post createPost(PostDTO postDTO, String imageUrl,String username, Set<Long> caregoryIds ) {
+    public Post createPost(PostDTO postDTO, String imageUrl,String username, Set<Long> caregoryIds, Set<Hashtag> hashtags) {
         Post post = new Post();
         Set<Category> categories = new HashSet<>(categoryRepository.findAllById(caregoryIds));
         post.setAuthor(userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")));
         post.setContent(postDTO.getContent());
         post.setCategories(categories);
+        post.setHashtags(hashtags);
         post.setImageUrl(imageUrl);
         return postRepository.save(post);
     }
