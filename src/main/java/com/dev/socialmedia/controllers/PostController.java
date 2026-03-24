@@ -40,12 +40,15 @@ public class PostController {
     ) {
         String username = (String) request.getAttribute("authenticatedUser");
         String imageUrl;
-        for (String hashtag : hashtags) {
-            if (!hashtagService.hashtagExists(hashtag)) {
-                hashtagService.createHashtag(hashtag);
+        Set<Hashtag> hashtagset = null;
+        if(hashtags != null && !hashtags.isEmpty()) {
+            for (String hashtag : hashtags) {
+                if (!hashtagService.hashtagExists(hashtag)) {
+                    hashtagService.createHashtag(hashtag);
+                }
             }
+            hashtagset = hashtagService.findByList(hashtags);
         }
-        Set<Hashtag> hashtagset = hashtagService.findByList(hashtags);
         if (imageFile != null && !imageFile.isEmpty()) {
             imageUrl = cloudinaryService.uploadFile(imageFile, "posts");
         } else {
@@ -53,12 +56,6 @@ public class PostController {
         }
         Post post = postService.createPost(postDTO, imageUrl, username, categories, hashtagset);
         return ResponseEntity.ok(new PostResponse(post));
-    }
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable Long postId, HttpServletRequest request) {
-        String username = (String) request.getAttribute("authenticatedUser");
-        postService.deletePost(postId, username);
-        return ResponseEntity.ok().build();
     }
     @PutMapping("/{postId}")
     public ResponseEntity<?> updatePost(
@@ -78,4 +75,10 @@ public class PostController {
         Post post = postService.updatePost(postId, postDTO, imageUrl, categories, username );
         return ResponseEntity.ok(new PostResponse(post));
     }
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId, HttpServletRequest request) {
+        String username = (String) request.getAttribute("authenticatedUser");
+        postService.deletePost(postId, username);
+        return ResponseEntity.ok().build();
+     }
 }

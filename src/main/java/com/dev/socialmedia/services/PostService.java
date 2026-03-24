@@ -19,10 +19,12 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    public PostService(PostRepository postRepository, UserRepository userRepository, CategoryRepository categoryRepository) {
+    private final CloudinaryService cloudinaryService;
+    public PostService(PostRepository postRepository, UserRepository userRepository, CategoryRepository categoryRepository, CloudinaryService cloudinaryService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
-            this.categoryRepository = categoryRepository;
+        this.categoryRepository = categoryRepository;
+        this.cloudinaryService = cloudinaryService;
     }
     public Post createPost(PostDTO postDTO, String imageUrl,String username, Set<Long> caregoryIds, Set<Hashtag> hashtags) {
         Post post = new Post();
@@ -37,13 +39,6 @@ public class PostService {
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
-    public void deletePost(Long postId, String username) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
-        if (!post.getAuthor().getUsername().equals(username)) {
-            throw new RuntimeException("Unauthorized");
-        }
-        postRepository.delete(post);
-    }
     public Post updatePost(Long postId, PostDTO postDTO, String username, Set<Long> categoryIds, String imageUrl) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
         if (!post.getAuthor().getUsername().equals(username)) {
@@ -56,5 +51,18 @@ public class PostService {
             post.setImageUrl(imageUrl);
         }
         return postRepository.save(post);
+    }
+    public void deletePost(Long postId, String username) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+        if (!post.getAuthor().getUsername().equals(username)) {
+            throw new RuntimeException("Unauthorized");
+        }
+        else
+        {
+            String publicId = cloudinaryService.getPublicIdFromUrl(post.getImageUrl());
+            cloudinaryService.deleteFile(publicId);
+            postRepository.delete(post);
+        }
+
     }
 }
